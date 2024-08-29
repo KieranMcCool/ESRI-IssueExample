@@ -1,0 +1,151 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>ArcGIS API for JavaScript Tutorials: Add layers to a map</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.26/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.26/"></script>
+
+    <script>
+      var map = null;
+      var renderMap = (showLabels) => {
+        require([
+          "esri/Map",
+          "esri/views/MapView",
+          "esri/layers/FeatureLayer",
+        ], function (Map, MapView, FeatureLayer) {
+          document.getElementById("viewDiv").innerHTML = "";
+
+          if (!!map) {
+            map.destroy();
+          }
+
+          map = new Map({
+            basemap: "topo-vector",
+          });
+
+          var view = new MapView({
+            container: "viewDiv",
+            map: map,
+            center: [-118.80543, 34.027],
+            zoom: 5,
+          });
+
+          var fields = [
+            {
+              name: "ObjectID",
+              alias: "ObjectID",
+              type: "oid",
+            },
+            {
+              name: "LocationName",
+              alias: "NLocationNameame",
+              type: "string",
+            },
+          ];
+
+          var features = [
+            {
+              geometry: {
+                type: "point",
+                longitude: -122.4194,
+                latitude: 37.7749,
+              },
+              attributes: {
+                ObjectID: 1,
+                LocationName: "San Francisco",
+              },
+            },
+            {
+              geometry: {
+                type: "point",
+                longitude: -118.2437,
+                latitude: 34.0522,
+              },
+              attributes: {
+                ObjectID: 2,
+                LocationName: "Los Angeles",
+              },
+            },
+            {
+              geometry: {
+                type: "point",
+                longitude: -95.3698,
+                latitude: 29.7604,
+              },
+              attributes: {
+                ObjectID: 3,
+                LocationName: "Houston",
+              },
+            },
+          ];
+
+          var labels = [
+            {
+              labelExpressionInfo: {
+                expression: "$feature.LocationName",
+              },
+              symbol: {
+                type: "text",
+                color: "black",
+                haloColor: "white",
+                haloSize: "1px",
+                font: {
+                  size: "12px",
+                  weight: "bold",
+                },
+              },
+            },
+          ];
+
+          var featureProperies = {
+            source: features,
+            fields: fields,
+            objectIdField: "ObjectID",
+            geometryType: "point",
+            spatialReference: {
+              wkid: 4326,
+            },
+            renderer: {
+              type: "simple",
+              symbol: {
+                type: "simple-marker",
+                color: "blue",
+                size: "8px",
+              },
+            },
+            labelingInfo: [],
+          };
+
+          if (showLabels) {
+            featureProperies.labelingInfo = labels;
+          }
+
+          var featureLayer = new FeatureLayer(featureProperies);
+          map.add(featureLayer);
+        });
+      };
+
+      renderMap(true);
+    </script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>
